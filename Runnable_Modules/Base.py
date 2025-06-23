@@ -85,6 +85,8 @@ def Polar_Profile(image_array, edge, averege=True, radial=True, bin_width=5):
     return (values, bin_edges)
 
 
+
+
 """
 looks at the selected filename denoted above to automatically define which list of halos is accesible for us to work with. and which sim data to use
 """
@@ -93,15 +95,24 @@ Sonia_path = "/home/vadilloj/MAP2023/Sims/h242.cosmo50PLK.3072g/h242.cosmo50PLK.
 Ruth_path =  "/home/vadilloj/MAP2023/Sims/h229.cosmo50PLK.3072g/h229.cosmo50PLK.3072gst5HbwK1BH/h229.cosmo50PLK.3072gst5HbwK1BH.004096/ahf_200/h229.cosmo50PLK.3072gst5HbwK1BH.004096"
 Elena_path  ="/home/vadilloj/MAP2023/Sims/h329.cosmo50PLK.3072g/h329.cosmo50PLK.3072gst5HbwK1BH/h329.cosmo50PLK.3072gst5HbwK1BH.004096/ahf_200/h329.cosmo50PLK.3072gst5HbwK1BH.004096"
 filepaths = pd.Series([Sandra_path, Sonia_path, Ruth_path, Elena_path], index = ["Sandra","Sonia", "Ruth", "Elena"])
+simulations = pd.DataFrame(filepaths, columns = ['filepath']) 
 
 
 
 
 
 
+def load_in_sim(filename = 'Sandra', within_virial_radius = True):
+    """
+    Loads in the simulation data for the given filename and returns the simulation object and the central halo.
+    
+    Parameters:
+    filename (str): The name of the simulation to load. Options are 'Sandra', 'Sonia', 'Ruth', or 'Elena'.
+    within_virial_radius (bool): If True, h1 returns a filter of all particles within 1vr of the main halo. 
+        If false, simply returns a copy of the halo data(which may exclude sattelites). Default is True.
 
-def load_in_sim(filename = 'Sandra'):
-    sim_filepath = filepaths['filename']
+    """
+    sim_filepath = filepaths[filename]
 
     #load and set the units for the simulation
     s = pynbody.load(sim_filepath)
@@ -119,7 +130,11 @@ def load_in_sim(filename = 'Sandra'):
     h1Filter = pynbody.filt.Sphere(rvir, cen)
     
     pynbody.analysis.angmom.sideon(s)
-    h1 = s[h1Filter]
+    if within_virial_radius:
+        # filter the particles to include all those within the virial radius of the main halo
+        h1 = s[h1Filter]
+    else:
+        h1 = h1_sub
     
     pynbody.analysis.angmom.sideon(h1)
 
