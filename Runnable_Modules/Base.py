@@ -1,19 +1,20 @@
 
 import pynbody
 import numpy as np
+import pandas as pd
 
 
-# set up matplotlib preferences
-mpl.rc('font',**{'family':'serif','monospace':['Palatino']})
-mpl.rc('text', usetex=True)
-mpl.rcParams.update({'figure.dpi': 200,
-                     'font.size': 9,
-                     'xtick.direction': 'in',
-                     'ytick.direction': 'in',
-                     'legend.frameon': False,
-                     'figure.constrained_layout.use': True,
-                     'xtick.top': True,
-                     'ytick.right': True})
+# # set up matplotlib preferences
+# mpl.rc('font',**{'family':'serif','monospace':['Palatino']})
+# mpl.rc('text', usetex=True)
+# mpl.rcParams.update({'figure.dpi': 200,
+#                      'font.size': 9,
+#                      'xtick.direction': 'in',
+#                      'ytick.direction': 'in',
+#                      'legend.frameon': False,
+#                      'figure.constrained_layout.use': True,
+#                      'xtick.top': True,
+#                      'ytick.right': True})
 
 
 
@@ -83,28 +84,24 @@ def Polar_Profile(image_array, edge, averege=True, radial=True, bin_width=5):
         values = return_values
     return (values, bin_edges)
 
-def load_in_files(filename):
-    
-    """
-    looks at the selected filename denoted above to automatically define which list of halos is accesible for us to work with. and which sim data to use
-    """  
 
-    if filename == 'Sandra':
-        sim_filepath = "/home/vadilloj/MAP2023/Sims/h148.cosmo50PLK.3072g/h148.cosmo50PLK.3072g3HbwK1BH/snapshots_200crit_h148/h148.cosmo50PLK.3072g3HbwK1BH.004096"
-        halolist = h148
-    elif filename == 'Sonia':
-        halolist = h242
-        sim_filepath = "/home/vadilloj/MAP2023/Sims/h242.cosmo50PLK.3072g/h242.cosmo50PLK.3072gst5HbwK1BH/h242.cosmo50PLK.3072gst5HbwK1BH.004096/h242.cosmo50PLK.3072gst5HbwK1BH.004096"
-    elif filename == 'Ruth':
-        halolist = h229
-        sim_filepath = "/home/vadilloj/MAP2023/Sims/h229.cosmo50PLK.3072g/h229.cosmo50PLK.3072gst5HbwK1BH/h229.cosmo50PLK.3072gst5HbwK1BH.004096/ahf_200/h229.cosmo50PLK.3072gst5HbwK1BH.004096"
-    elif filename == 'Elena':
-        halolist = h329
-        sim_filepath = "/home/vadilloj/MAP2023/Sims/h329.cosmo50PLK.3072g/h329.cosmo50PLK.3072gst5HbwK1BH/h329.cosmo50PLK.3072gst5HbwK1BH.004096/ahf_200/h329.cosmo50PLK.3072gst5HbwK1BH.004096"
-    return sim_filepath, halolist
+"""
+looks at the selected filename denoted above to automatically define which list of halos is accesible for us to work with. and which sim data to use
+"""
+Sandra_path ="/home/vadilloj/MAP2023/Sims/h148.cosmo50PLK.3072g/h148.cosmo50PLK.3072g3HbwK1BH/snapshots_200crit_h148/h148.cosmo50PLK.3072g3HbwK1BH.004096"
+Sonia_path = "/home/vadilloj/MAP2023/Sims/h242.cosmo50PLK.3072g/h242.cosmo50PLK.3072gst5HbwK1BH/h242.cosmo50PLK.3072gst5HbwK1BH.004096/h242.cosmo50PLK.3072gst5HbwK1BH.004096"
+Ruth_path =  "/home/vadilloj/MAP2023/Sims/h229.cosmo50PLK.3072g/h229.cosmo50PLK.3072gst5HbwK1BH/h229.cosmo50PLK.3072gst5HbwK1BH.004096/ahf_200/h229.cosmo50PLK.3072gst5HbwK1BH.004096"
+Elena_path  ="/home/vadilloj/MAP2023/Sims/h329.cosmo50PLK.3072g/h329.cosmo50PLK.3072gst5HbwK1BH/h329.cosmo50PLK.3072gst5HbwK1BH.004096/ahf_200/h329.cosmo50PLK.3072gst5HbwK1BH.004096"
+filepaths = pd.Series([Sandra_path, Sonia_path, Ruth_path, Elena_path], index = ["Sandra","Sonia", "Ruth", "Elena"])
 
-def load_in_sim(filename):
-    sim_filepath, halolist = load_in_files(filename)
+
+
+
+
+
+
+def load_in_sim(filename = 'Sandra'):
+    sim_filepath = filepaths['filename']
 
     #load and set the units for the simulation
     s = pynbody.load(sim_filepath)
@@ -126,4 +123,4 @@ def load_in_sim(filename):
     
     pynbody.analysis.angmom.sideon(h1)
 
-    return s, h1, halolist
+    return s, h1
