@@ -1,15 +1,7 @@
-import pandas as pd
+
 import pynbody
 import numpy as np
-import h5py
-import pynbody.plot.sph as sph
-import matplotlib as mpl
-from matplotlib import colors
-from pynbody import units
 
-from matplotlib.lines import Line2D
-from matplotlib.patches import Patch
-import matplotlib.pyplot as plt
 
 # set up matplotlib preferences
 mpl.rc('font',**{'family':'serif','monospace':['Palatino']})
