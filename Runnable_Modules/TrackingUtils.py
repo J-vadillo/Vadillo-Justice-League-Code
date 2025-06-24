@@ -64,7 +64,7 @@ def find_halo_particles(h1, simulations, filename = 'Sandra'):
         #from all satelites
         
     all_bool = np.isin(h1.g['iord'], all_halos)
-    halo_subsims['all_halos'] =  h1.g[all_bool]#repeat steps above for list of all acreted particles
+    halo_subsims['halos'] =  h1.g[all_bool]#repeat steps above for list of all acreted particles
     
     local_bool = np.invert(all_bool) 
     halo_subsims['local'] = h1.g[local_bool]#flip the boolean array to get a callable list 
