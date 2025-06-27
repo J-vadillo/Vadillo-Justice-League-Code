@@ -102,7 +102,7 @@ simulations = pd.DataFrame(filepaths, columns = ['filepath'])
 
 
 
-def load_in_sim(filename = 'Sandra', within_virial_radius = True):
+def load_in_sim(filename = 'Sandra', within_virial_radius = True, return_h = False):
     """
     Loads in the simulation data for the given filename and returns the simulation object and the central halo.
     
@@ -138,4 +138,7 @@ def load_in_sim(filename = 'Sandra', within_virial_radius = True):
     
     pynbody.analysis.angmom.sideon(h1)
 
-    return s, h1
+    if return_h:
+        return s, h1, h
+    else:
+        return s, h1

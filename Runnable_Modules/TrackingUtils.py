@@ -34,19 +34,24 @@ def find_halo_keys(simulations):
         elif key.startswith('h329'):
             h329.append(key)
     halos = pd.Series({'Sandra': h148, 'Ruth': h229, 'Sonia': h242, 'Elena':h329})
+    halos = pd.Series({'Sandra': h148, 'Ruth': h229, 'Sonia': h242, 'Elena':h329})
     simulations['Halo keys'] = halos
     return()
 
-def find_halo_particles(h1, simulations, filename = 'Sandra'):
+def find_halo_particles(h1, simulations, filename = 'Sandra', groupSmalls = False):
     """
     for each halo in the list of halos, find all tracked particles, and add them toa  dictionary where they can be pulled from
     """
+    smallThreshold  = 10**9 #threshold for small halos, if groupSmalls is true, then all halos smaller than this will be grouped together
     
     halo_subsims = {}#create dictionary
     all_halos = np.array([])#create a list for particles in any halo
-    
-    halolist = simulations['Halo keys'][filename]#get the list of halos for the given simulation
-    
+    small_halos = np.array([])#create a list for particles in any halo
+    try:
+        halolist = simulations['Halo keys'][filename]#get the list of halos for the given simulation
+    except KeyError:
+        print("No halo keys found for simulation '{filename}'. Please Run the find_halo_keys function() first.")
+        return {}
     for halo in halolist:
         # particle_list = [] ##array to store all particle ids within it
         halo_of_origin = "h"+(halo.split('_')[1]) #string denoting the halo of origin
@@ -55,18 +60,25 @@ def find_halo_particles(h1, simulations, filename = 'Sandra'):
         halo_particle_IDs = (tracked_particles['pid'].to_numpy())#isolate and create a np list of PID's 
         bools = np.isin(h1.g['iord'], halo_particle_IDs)#Using the particle ID's defined above, for every particle in the central
         #galaxy make a boolean list of wether or not it is in the satelite currently observed
+        if groupSmalls & (np.sum(h[int(halo.split('_')[1])]) < smallThreshold):
+            small_halos = np.append(small_halos, halo_particle_IDs)#add PID's of this specific halo, to the list of the particles accreted
     
-        halo_subsims[halo_of_origin] =  h1.g[bools]#create a dictionary entry with the
+        else:
+            halo_subsims[halo_of_origin] =  h1.g[bools]#create a dictionary entry with the
         #list of all particles ID's(particles), and turn the boolean list to have a callable pynbody data file
         
         
         all_halos = np.append(all_halos, halo_particle_IDs)#add PID's of this specific halo, to the list of the particles accreted
         #from all satelites
-        
+    if groupSmalls:
+        small_bool = np.isin(h1.g['iord'], small_halos)
+        halo_subsims['Dwarf Sattelites'] = h1.g[small_bool]     
     all_bool = np.isin(h1.g['iord'], all_halos)
+    
     halo_subsims['halos'] =  h1.g[all_bool]#repeat steps above for list of all acreted particles
     
     local_bool = np.invert(all_bool) 
-    halo_subsims['local'] = h1.g[local_bool]#flip the boolean array to get a callable list 
+    halo_subsims['local'] = h1.g[local_bool]#flip the boolean array to get a callable list
+
     return halo_subsims
     #of just the particles in the central halo
