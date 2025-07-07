@@ -120,23 +120,21 @@ def load_in_sim(filename = 'Sandra', within_virial_radius = True, return_h = Fal
     
     # load the central halo
     h = s.halos(halo_numbers='v1')
-    h1_sub = h.load_copy(1)
-    h1_sub.physical_units()
-    
-    pynbody.analysis.angmom.sideon(h1_sub) # recenters
-    cen = pynbody.analysis.halo.center(h1_sub, return_cen = True) # recenters
-    rvir = np.max(h1_sub['r'])
+
+    pynbody.analysis.angmom.sideon(h[1])
+    cen = pynbody.analysis.halo.center(h[1], return_cen = True) # recenters
+    rvir = np.max(h[1]['r'])
     
     h1Filter = pynbody.filt.Sphere(rvir, cen)
     
-    pynbody.analysis.angmom.sideon(s)
+    
     if within_virial_radius:
         # filter the particles to include all those within the virial radius of the main halo
         h1 = s[h1Filter]
     else:
-        h1 = h1_sub
+        h1 =  h.load_copy(1)
     
-    pynbody.analysis.angmom.sideon(h1)
+    
 
     if return_h:
         return s, h1, h

@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import h5py
-
 tracked_filepath = "/home/christenc/Code/python/Justice_League_Code/Data/tracked_particles.hdf5"
 def find_halo_keys(simulations):
 
@@ -37,12 +36,13 @@ def find_halo_keys(simulations):
     halos = pd.Series({'Sandra': h148, 'Ruth': h229, 'Sonia': h242, 'Elena':h329})
     simulations['Halo keys'] = halos
     return()
-
+Hchars_path = '/home/vadilloj/MAP2023/Vadillo-Justice-League-Code/All_halo_charachteristics.csv'
+HChars = pd.read_csv(Hchars_path, index_col = 0)
 def find_halo_particles(h1, simulations, filename = 'Sandra', groupSmalls = False):
     """
     for each halo in the list of halos, find all tracked particles, and add them toa  dictionary where they can be pulled from
     """
-    smallThreshold  = 10**9 #threshold for small halos, if groupSmalls is true, then all halos smaller than this will be grouped together
+    smallThreshold  = 10**8.5#threshold for small halos, if groupSmalls is true, then all halos smaller than this will be grouped together
     
     halo_subsims = {}#create dictionary
     all_halos = np.array([])#create a list for particles in any halo
@@ -55,13 +55,18 @@ def find_halo_particles(h1, simulations, filename = 'Sandra', groupSmalls = Fals
     for halo in halolist:
         # particle_list = [] ##array to store all particle ids within it
         halo_of_origin = "h"+(halo.split('_')[1]) #string denoting the halo of origin
+        if halo not in list(HChars.index):
+            continue#if the halo of origin is h148, then we are in Sandra's simulation
     
         tracked_particles = pd.read_hdf(tracked_filepath, key = halo)#find all information on particles tracked in given halo
         halo_particle_IDs = (tracked_particles['pid'].to_numpy())#isolate and create a np list of PID's 
         bools = np.isin(h1.g['iord'], halo_particle_IDs)#Using the particle ID's defined above, for every particle in the central
         #galaxy make a boolean list of wether or not it is in the satelite currently observed
-        if groupSmalls & (np.sum(h[int(halo.split('_')[1])]) < smallThreshold):
-            small_halos = np.append(small_halos, halo_particle_IDs)#add PID's of this specific halo, to the list of the particles accreted
+        if groupSmalls:
+            if HChars.at[halo, "mgas"]< smallThreshold:
+                small_halos = np.append(small_halos, halo_particle_IDs)
+            else:
+                halo_subsims[halo_of_origin] =  h1.g[bools]  #add PID's of this specific halo, to the list of the particles accreted
     
         else:
             halo_subsims[halo_of_origin] =  h1.g[bools]#create a dictionary entry with the
@@ -70,7 +75,7 @@ def find_halo_particles(h1, simulations, filename = 'Sandra', groupSmalls = Fals
         
         all_halos = np.append(all_halos, halo_particle_IDs)#add PID's of this specific halo, to the list of the particles accreted
         #from all satelites
-    if groupSmalls:
+    if groupSmalls: #if we are grouping small halos, and there are any small halos
         small_bool = np.isin(h1.g['iord'], small_halos)
         halo_subsims['Dwarf Sattelites'] = h1.g[small_bool]     
     all_bool = np.isin(h1.g['iord'], all_halos)
