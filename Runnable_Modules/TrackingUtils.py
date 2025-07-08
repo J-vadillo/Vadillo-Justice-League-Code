@@ -1,6 +1,15 @@
 import numpy as np
 import pandas as pd
 import h5py
+
+import sys
+directory_path  = '/home/vadilloj/MAP2023/Vadillo-Justice-League-Code'
+sys.path.append(directory_path)
+
+from Runnable_Modules import Base
+
+
+
 tracked_filepath = "/home/christenc/Code/python/Justice_League_Code/Data/tracked_particles.hdf5"
 Hchars_path = '/home/vadilloj/MAP2023/Vadillo-Justice-League-Code/All_halo_charachteristics.csv'
 HChars = pd.read_csv(Hchars_path, index_col = 0)
@@ -36,16 +45,15 @@ def find_halo_keys(simulations):
         elif key.startswith('h329'):
             h329.append(key)
     halos = pd.Series({'Sandra': h148, 'Ruth': h229, 'Sonia': h242, 'Elena':h329})
-    halos = pd.Series({'Sandra': h148, 'Ruth': h229, 'Sonia': h242, 'Elena':h329})
     simulations['Halo keys'] = halos
     return()
 
-def find_halo_particles(h1, simulations, filename = 'Sandra', groupSmalls = False):
+def find_halo_particles(h1, filename = 'Sandra'):
     """
     for each halo in the list of halos, find all tracked particles, and add them toa  dictionary where they can be pulled from
     """
-    smallThreshold  = 10**8.5#threshold for small halos, if groupSmalls is true, then all halos smaller than this will be grouped together
-    
+    simulations = Base.get_chars('sims')#load in the simulation characteristics
+    find_halo_keys(simulations)
     halo_subsims = {}#create dictionary
     all_halos = np.array([])#create a list for particles in any halo
     try:
