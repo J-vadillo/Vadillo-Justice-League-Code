@@ -87,17 +87,20 @@ def Polar_Profile(image_array, edge, averege=True, radial=True, bin_width=5):
 
 
 
-"""
-looks at the selected filename denoted above to automatically define which list of halos is accesible for us to work with. and which sim data to use
-"""
-Sandra_path ="/home/vadilloj/MAP2023/Sims/h148.cosmo50PLK.3072g/h148.cosmo50PLK.3072g3HbwK1BH/snapshots_200crit_h148/h148.cosmo50PLK.3072g3HbwK1BH.004096"
-Sonia_path = "/home/vadilloj/MAP2023/Sims/h242.cosmo50PLK.3072g/h242.cosmo50PLK.3072gst5HbwK1BH/h242.cosmo50PLK.3072gst5HbwK1BH.004096/h242.cosmo50PLK.3072gst5HbwK1BH.004096"
-Ruth_path =  "/home/vadilloj/MAP2023/Sims/h229.cosmo50PLK.3072g/h229.cosmo50PLK.3072gst5HbwK1BH/h229.cosmo50PLK.3072gst5HbwK1BH.004096/ahf_200/h229.cosmo50PLK.3072gst5HbwK1BH.004096"
-Elena_path  ="/home/vadilloj/MAP2023/Sims/h329.cosmo50PLK.3072g/h329.cosmo50PLK.3072gst5HbwK1BH/h329.cosmo50PLK.3072gst5HbwK1BH.004096/ahf_200/h329.cosmo50PLK.3072gst5HbwK1BH.004096"
-filepaths = pd.Series([Sandra_path, Sonia_path, Ruth_path, Elena_path], index = ["Sandra","Sonia", "Ruth", "Elena"])
-simulations = pd.DataFrame(filepaths, columns = ['filepath']) 
-
-
+directory_path  = '/home/vadilloj/MAP2023/Vadillo-Justice-League-Code'
+def get_chars(type):
+    """
+    gets a pd data frame of the desired charachteristics, as designated by type
+    type: simulations, or halo
+    """
+    HChars_path = directory_path + "/All_halo_charachteristics.csv"
+    sims_path = directory_path + "/All_sim_charachteristics.csv"
+    if type == "sims":
+        return pd.read_csv(sims_path, index_col = 0)
+    elif type == "halos":
+        return pd.read_csv(HChars_path, index_col = 0)
+    else:
+        raise ValueError("type must be 'sims' or 'halos'")
 
 
 
@@ -112,7 +115,8 @@ def load_in_sim(filename = 'Sandra', within_virial_radius = True, return_h = Fal
         If false, simply returns a copy of the halo data(which may exclude sattelites). Default is True.
 
     """
-    sim_filepath = filepaths[filename]
+    sim_chars = get_chars('sims')
+    sim_filepath = sim_chars.at[filename, 'filepath']
 
     #load and set the units for the simulation
     s = pynbody.load(sim_filepath)
