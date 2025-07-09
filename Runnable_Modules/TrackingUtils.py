@@ -64,8 +64,8 @@ def find_halo_particles(h1, filename = 'Sandra'):
     for halo in halolist:
         # particle_list = [] ##array to store all particle ids within it
         halo_of_origin = "h"+(halo.split('_')[1]) #string denoting the halo of origin
-        if halo not in list(HChars.index):
-            continue#if the halo of origin is h148, then we are in Sandra's simulation
+        # if halo not in list(HChars.index):
+        #     continue#if the halo of origin is h148, then we are in Sandra's simulation
     
         tracked_particles = pd.read_hdf(tracked_filepath, key = halo)#find all information on particles tracked in given halo
         halo_particle_IDs = (tracked_particles['pid'].to_numpy())#isolate and create a np list of PID's 
