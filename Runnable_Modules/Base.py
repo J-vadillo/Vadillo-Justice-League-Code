@@ -146,7 +146,7 @@ def load_in_sim(filename = 'Sandra', within_virial_radius = True, return_h = Fal
         return s, h1
 
 
-def readInData(filename):
+def FormatDF(DataFrame):
     import ast
     def string_to_list(x):
         if isinstance(x, str):
@@ -161,9 +161,5 @@ def readInData(filename):
                     return x
         return x
 
-        
-    data_name = data_filepath + filename +"Halo Charachteristics.csv"
-    
-    HaloChars  = pd.read_csv(data_name, index_col = 0)
-    HaloChars  = HaloChars.map(string_to_list)
-    return(HaloChars)
+    DataFrame  = DataFrame.map(string_to_list)
+    return(DataFrame)
