@@ -14,7 +14,7 @@ tracked_filepath = "/home/christenc/Code/python/Justice_League_Code/Data/tracked
 Hchars_path = '/home/vadilloj/MAP2023/Vadillo-Justice-League-Code/All_halo_charachteristics.csv'
 HChars = pd.read_csv(Hchars_path, index_col = 0)
 
-def find_halo_keys(simulations):
+def find_halo_keys(simulations, mint = False):
 
     """
     pre-processing to aid in aprticle tracking -- takes in the filepath to all tracked particles, and divides them by relevant halos
@@ -22,7 +22,13 @@ def find_halo_keys(simulations):
     """
 
     #load pandas file with particle tracking for all four sims
-    halo_keys= np.array(list(h5py.File(tracked_filepath).keys()))#load in tracked particle data for all the halos and sims
+    if mint:
+        tracked_filepath = "/home/christenc/Data/Sims/tracked_particles_mint.hdf5"
+        halo_keys= np.array(list(h5py.File(tracked_filepath).keys()))#load in tracked particle data for all the halos and sims
+    else:
+        tracked_filepath = "/home/christenc/Code/python/Justice_League_Code/Data/tracked_particles.hdf5"
+        halo_keys= np.array(list(h5py.File(tracked_filepath).keys()))#load in tracked particle data for all the halos and sims
+        
     halo_keys = sorted(halo_keys, key=lambda x: int(x.split('_', 1)[1]))
     #sort halo keys so that it appears in an order of decending halo size for all simulations
 
@@ -53,7 +59,10 @@ def find_halo_particles(h1, filename = 'Sandra'):
     for each halo in the list of halos, find all tracked particles, and add them toa  dictionary where they can be pulled from
     """
     simulations = Base.get_chars('sims')#load in the simulation characteristics
-    find_halo_keys(simulations)
+    mint = False
+    if filename == "Sandra_h":
+        mint= True
+    find_halo_keys(simulations, mint)
     halo_subsims = {}#create dictionary
     all_halos = np.array([])#create a list for particles in any halo
     try:

@@ -95,10 +95,12 @@ def get_chars(type):
     """
     HChars_path = directory_path + "/All_halo_charachteristics.csv"
     sims_path = directory_path + "/All_sim_charachteristics.csv"
+    hsims_path = directory_path + "/All_sim_charachteristics.csv"
     if type == "sims":
         df = pd.read_csv(sims_path, index_col = 0)
-        good_df = FormatDF(df)
-        return good_df
+        #good_df = FormatDF(df)
+        return df #good df
+
     elif type == "halos":
         return pd.read_csv(HChars_path, index_col = 0)
     else:
