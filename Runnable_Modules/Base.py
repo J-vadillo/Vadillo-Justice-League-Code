@@ -133,7 +133,7 @@ def load_in_sim(filename = 'Sandra', within_virial_radius = True, return_h = Fal
     cen = pynbody.analysis.halo.center(h[1], return_cen = True) # recenters
     rvir = np.max(h[1]['r'])
     
-    h1Filter = pynbody.filt.Sphere(rvir, cen)
+    h1Filter = pynbody.filt.Sphere(rvir, cen) #two times the rvir is used for the radius to be able to get data on a greater amount of stuff.
     
     
     if within_virial_radius:
@@ -147,7 +147,7 @@ def load_in_sim(filename = 'Sandra', within_virial_radius = True, return_h = Fal
     if return_h:
         return s, h1, h
     else:
-        return s, h1
+        return s, h
 
 
 def FormatDF(DataFrame):
