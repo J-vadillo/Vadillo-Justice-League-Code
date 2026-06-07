@@ -47,6 +47,8 @@ def Polar_Profile(image_array, edge, averege=True, radial=True, bin_width=5):
     values = []  # an array to store the corresponding value of if said bin is covered or not
     if len(image_array) != len(image_array[0]):
         raise Exception("Sorry, image array must be square") 
+
+        
     ncells = len(image_array) #the number of cells in the image array along a given axis. Image is assumed to be square.
     cell_width = 2*edge / ncells  # defines how many kpc's each cell in the image currently possesses.
    
@@ -133,7 +135,7 @@ def load_in_sim(filename = 'Sandra', within_virial_radius = True, return_h = Fal
     cen = pynbody.analysis.halo.center(h[1], return_cen = True) # recenters
     rvir = np.max(h[1]['r'])
     
-    h1Filter = pynbody.filt.Sphere(rvir, cen) #two times the rvir is used for the radius to be able to get data on a greater amount of stuff.
+    h1Filter = pynbody.filt.Sphere(2*rvir, cen) #two times the rvir is used for the radius to be able to get data on a greater amount of stuff.
     
     
     if within_virial_radius:
