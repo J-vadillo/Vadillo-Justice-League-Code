@@ -100,8 +100,8 @@ def get_chars(type):
     hsims_path = directory_path + "/All_sim_charachteristics.csv"
     if type == "sims":
         df = pd.read_csv(sims_path, index_col = 0)
-        #good_df = FormatDF(df)
-        return df #good df
+        good_df = FormatDF(df)
+        return good_df
 
     elif type == "halos":
         return pd.read_csv(HChars_path, index_col = 0)
@@ -135,7 +135,7 @@ def load_in_sim(filename = 'Sandra', within_virial_radius = True, return_h = Fal
     cen = pynbody.analysis.halo.center(h[1], return_cen = True) # recenters
     rvir = np.max(h[1]['r'])
     
-    h1Filter = pynbody.filt.Sphere(2*rvir, cen) #two times the rvir is used for the radius to be able to get data on a greater amount of stuff.
+    h1Filter = pynbody.filt.Sphere(rvir, cen) #two times the rvir is used for the radius to be able to get data on a greater amount of stuff.
     
     
     if within_virial_radius:
@@ -157,12 +157,9 @@ def FormatDF(DataFrame):
     def string_to_list(x):
         if isinstance(x, str):
             # Try to detect list-like pattern: [ ... ]
-            if x.strip().startswith("[") and x.strip().endswith("]"):
-                # Replace spaces with commas inside brackets
-                inside = x.strip()[1:-1]
-                fixed = "[" + ",".join(inside.split()) + "]"
+            if x.startswith("[") and x.endswith("]"):
                 try:
-                    return ast.literal_eval(fixed)
+                    return ast.literal_eval(x)
                 except (SyntaxError, ValueError):
                     return x
         return x
